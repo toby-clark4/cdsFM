@@ -19,7 +19,7 @@ from transformers.modeling_utils import PreTrainedModel
 from transformers.utils import logging
 from transformers.modeling_outputs import BaseModelOutputWithPast, BaseModelOutput, CausalLMOutputWithPast
 from transformers.modeling_attn_mask_utils import _prepare_4d_causal_attention_mask
-import xformers.ops as xops
+# import xformers.ops as xops
 
 from collections import OrderedDict
 

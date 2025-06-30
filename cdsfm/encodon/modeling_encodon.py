@@ -30,7 +30,7 @@ from transformers.activations import ACT2FN
 from transformers.modeling_utils import PreTrainedModel
 from transformers.utils import ModelOutput, logging
 from transformers.modeling_outputs import MaskedLMOutput
-import xformers.ops as xops
+# import xformers.ops as xops
 
 logger = logging.get_logger(__name__)
 
@@ -1556,7 +1556,7 @@ class EnCodonForSequenceTask(EnCodonPreTrainedModel):
     def forward(
         self,
         input_ids: Optional[torch.Tensor] = None,
-        target: Optional[torch.Tensor] = None,
+        labels: Optional[torch.Tensor] = None,
         attention_mask: Optional[torch.Tensor] = None,
         token_type_ids: Optional[torch.Tensor] = None,
         position_ids: Optional[torch.Tensor] = None,
@@ -1612,7 +1612,7 @@ class EnCodonForSequenceTask(EnCodonPreTrainedModel):
             ca = None
 
         loss = None
-        if target is not None:
+        if labels is not None:
             if self.config.problem_type == "regression":
                 if self.config.loss_fn == "mse":
                     loss_fct = nn.MSELoss()
@@ -1624,20 +1624,20 @@ class EnCodonForSequenceTask(EnCodonPreTrainedModel):
                     raise ValueError(f"Invalid loss_fn: {self.config.loss_fn}.")
 
                 logits = logits.view(-1, self.config.num_labels * self.config.num_tasks)
-                target = target.view(-1, self.config.num_labels * self.config.num_tasks)
+                labels = labels.view(-1, self.config.num_labels * self.config.num_tasks)
 
-                mask = target != -500.0
+                mask = labels != -500.0
 
-                loss = loss_fct(logits[mask], target[mask])
+                loss = loss_fct(logits[mask], labels[mask])
             else:
                 loss_fct = nn.CrossEntropyLoss()
 
                 logits = logits.view(-1, self.config.num_labels * self.config.num_tasks)
-                target = target.view(
+                labels = labels.view(
                     -1,
                 )
 
-                loss = loss_fct(logits, target)
+                loss = loss_fct(logits, labels)
 
         if not return_dict:
             output = (logits,) + outputs[2:]
@@ -1650,10 +1650,9 @@ class EnCodonForSequenceTask(EnCodonPreTrainedModel):
                 attentions = outputs.attentions
         else:
             attentions = None
-
         return SequenceClassifierOutput(
             loss=loss,
             logits=logits,
-            hidden_states=outputs.hidden_states,
-            attentions=attentions,
+            # hidden_states=outputs.hidden_states,
+            # attentions=attentions,
         )

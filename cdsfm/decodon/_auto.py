@@ -93,7 +93,7 @@ class AutoDeCodon:
 
         cols = ["auto_seq"] if taxid_col is None else ["auto_seq", taxid_col]
 
-        dataset = Dataset.from_pandas(df[cols])
+        dataset = Dataset.from_pandas(df[cols], preserve_index=False)
 
         def f(x):
             encoded = self.tokenizer(

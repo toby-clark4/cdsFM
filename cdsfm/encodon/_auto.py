@@ -117,15 +117,14 @@ class AutoEnCodon:
         """
         if isinstance(seqs, str):
             seqs = [seqs]
-            
         dataset = Dataset.from_pandas(pd.DataFrame({"seq": seqs}))
         dataset = dataset.map(lambda x: self.tokenizer(
             [f"{self.tokenizer.cls_token}{y}{self.tokenizer.sep_token}" for y in x["seq"]],
             add_special_tokens=False,
             return_attention_mask=True,
             return_special_tokens_mask=True,
+            truncation=True,
         ), batched=True, num_proc=num_workers, remove_columns=["seq"])
-        
         collator = DataCollatorForLanguageModeling(
             tokenizer=self.tokenizer,
             mlm=False,
