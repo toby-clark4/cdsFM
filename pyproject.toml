@@ -11,7 +11,8 @@ dependencies = [
     "pytorch-lightning>=2.4.0",
     "torch>=2",
     "transformers>=4",
-    "biopython>=1.7"
+    "biopython>=1.7",
+    "scanpy",
 ]
 
 [tool.setuptools]
